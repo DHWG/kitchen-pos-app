@@ -46,6 +46,7 @@ class SelectProductActivity : Activity() {
         override fun onClick(v: View?) {
             val intent = Intent(this@SelectProductActivity, MainActivity::class.java)
             Log.i("PURCHASE", "Buyer $buyerId, Product ${product.id}")
+            DHWGManagementAPI.addPurchase(buyerId, product.id)
             startActivity(intent)
         }
 

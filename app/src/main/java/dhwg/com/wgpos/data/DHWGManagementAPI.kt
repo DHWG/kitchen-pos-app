@@ -1,12 +1,14 @@
 package dhwg.com.wgpos.data
 
+import android.util.Log
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.fuel.httpGet
+import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 
 object DHWGManagementAPI {
 
-    data class Inhabitant(val id: Int, val username: String)
+    data class Inhabitant(val id: Int, val username: String, val balance: Double)
     data class Product(val id: Int, val name: String, val unitPrice: Double)
 
     val API_ROOT = "https://dhwg-management.herokuapp.com/api/"
@@ -28,8 +30,29 @@ object DHWGManagementAPI {
                             for (i in 0 until json.length()) {
                                 val inhabitant = json.getJSONObject(i)
                                 result.add(Inhabitant(inhabitant.getInt("id"),
-                                                      inhabitant.getString("username")))
+                                                      inhabitant.getString("username"),
+                                                      inhabitant.getDouble("balance")))
                             }
+                            onSuccess(result)
+                        }
+                    }
+                }
+    }
+
+    fun getInhabitant(id: Int, onSuccess: (Inhabitant) -> Unit) {
+        (API_ROOT + "inhabitants/")
+                .httpGet()
+                .authenticate(USER, PASSWORD)
+                .responseJson { request, response, result ->
+                    when (result) {
+                        is Result.Failure -> {
+                            // TODO
+                        }
+                        is Result.Success -> {
+                            val inhabitant = result.get().obj()
+                            val result = Inhabitant(inhabitant.getInt("id"),
+                                                    inhabitant.getString("username"),
+                                                    inhabitant.getDouble("balance"))
                             onSuccess(result)
                         }
                     }
@@ -55,6 +78,25 @@ object DHWGManagementAPI {
                                                    product.getDouble("unit_price")))
                             }
                             onSuccess(result)
+                        }
+                    }
+                }
+    }
+
+    fun addPurchase(buyerId: Int, productId: Int) {
+        (API_ROOT + "pos/purchases/")
+                .httpPost()
+                .authenticate(USER, PASSWORD)
+                .header(Pair("Content-Type", "application/json"))
+                .body("{ \"buyer\" : $buyerId, \"product\" : $productId }")
+                .responseJson { request, response, result ->
+                    when (result) {
+                        is Result.Failure -> {
+                            Log.e("PURCHASE", result.error.toString())
+                            Log.e("PURCHASE", request.cUrlString())
+                        }
+                        is Result.Success -> {
+                            Log.i("Made purchase", result.get().toString())
                         }
                     }
                 }
