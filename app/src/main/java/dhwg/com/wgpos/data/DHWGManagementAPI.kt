@@ -40,13 +40,13 @@ object DHWGManagementAPI {
     }
 
     fun getInhabitant(id: Int, onSuccess: (Inhabitant) -> Unit) {
-        (API_ROOT + "inhabitants/")
+        (API_ROOT + "inhabitants/$id/")
                 .httpGet()
                 .authenticate(USER, PASSWORD)
                 .responseJson { request, response, result ->
                     when (result) {
                         is Result.Failure -> {
-                            // TODO
+                            Log.e("GET INHABITANT", result.error.toString())
                         }
                         is Result.Success -> {
                             val inhabitant = result.get().obj()

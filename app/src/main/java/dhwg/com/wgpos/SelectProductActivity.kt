@@ -44,7 +44,8 @@ class SelectProductActivity : Activity() {
     inner class ButtonListener(val product: DHWGManagementAPI.Product, val buyerId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
-            val intent = Intent(this@SelectProductActivity, MainActivity::class.java)
+            val intent = Intent(this@SelectProductActivity, SummaryActivity::class.java)
+            intent.putExtra("buyerId", buyerId)
             Log.i("PURCHASE", "Buyer $buyerId, Product ${product.id}")
             DHWGManagementAPI.addPurchase(buyerId, product.id)
             startActivity(intent)
