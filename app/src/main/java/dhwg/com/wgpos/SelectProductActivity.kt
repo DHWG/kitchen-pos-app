@@ -9,18 +9,20 @@ import android.widget.Button
 import android.widget.GridLayout
 import dhwg.com.wgpos.data.DHWGManagementAPI
 
-
-class MainActivity : Activity() {
+class SelectProductActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        val intent = intent
+        val buyerId = intent.getIntExtra("buyerId", -1)
 
-        val glay = findViewById(R.id.griddy) as GridLayout
-        DHWGManagementAPI.getInhabitants { inhabitants ->
-            for (inhabitant in inhabitants) {
-                val button = createButton(inhabitant)
+        setContentView(R.layout.activity_select_product)
+
+        val glay = findViewById(R.id.select_product_griddy) as GridLayout
+        DHWGManagementAPI.getProducts { products ->
+            for (product in products) {
+                val button = createButton(product, buyerId)
                 glay.addView(button)
             }
         }
@@ -39,22 +41,22 @@ class MainActivity : Activity() {
         }
     }
 
-    inner class ButtonListener(val inhabitant: DHWGManagementAPI.Inhabitant) : View.OnClickListener {
+    inner class ButtonListener(val product: DHWGManagementAPI.Product, val buyerId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
-            val intent = Intent(this@MainActivity, SelectProductActivity::class.java)
-            intent.putExtra("buyerId", inhabitant.id)
+            val intent = Intent(this@SelectProductActivity, MainActivity::class.java)
+            Log.i("PURCHASE", "Buyer $buyerId, Product ${product.id}")
             startActivity(intent)
         }
 
     }
 
-    private fun createButton(inhabitant: DHWGManagementAPI.Inhabitant): Button {
+    private fun createButton(product: DHWGManagementAPI.Product, buyerId: Int): Button {
         val b = Button(this)
-        b.text = inhabitant.username
+        b.text = "${product.name} (${(product.unitPrice * 100).toInt()}ct)"
         b.width = 200
         b.height = 200
-        b.setOnClickListener(ButtonListener(inhabitant))
+        b.setOnClickListener(ButtonListener(product, buyerId))
         return b
     }
 

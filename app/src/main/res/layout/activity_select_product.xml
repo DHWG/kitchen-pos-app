@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dhwg.com.wgpos.MainActivity">
+    tools:context="dhwg.com.wgpos.SelectProductActivity">
 
     <GridLayout
-        android:id="@+id/griddy"
-        android:layout_width="1008dp"
-        android:layout_height="447dp"
+        android:id="@+id/select_product_griddy"
+        android:layout_width="584dp"
+        android:layout_height="871dp"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="8dp">
 
