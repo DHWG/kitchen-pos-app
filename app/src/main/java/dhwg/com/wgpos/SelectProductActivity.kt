@@ -13,6 +13,7 @@ class SelectProductActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val application = application as WGPoSApplication
 
         val intent = intent
         val buyerId = intent.getIntExtra("buyerId", -1)
@@ -28,7 +29,7 @@ class SelectProductActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val glay = findViewById(R.id.select_product_griddy) as GridLayout
-        DHWGManagementAPI.getProducts { products ->
+        application.apiClient!!.getProducts { products ->
             for (product in products) {
                 val button = createButton(product, buyerId)
                 glay.addView(button)
@@ -42,7 +43,7 @@ class SelectProductActivity : Activity() {
             val intent = Intent(this@SelectProductActivity, SummaryActivity::class.java)
             intent.putExtra("buyerId", buyerId)
             Log.i("PURCHASE", "Buyer $buyerId, Product ${product.id}")
-            DHWGManagementAPI.addPurchase(buyerId, product.id)
+            (application as WGPoSApplication).apiClient!!.addPurchase(buyerId, product.id)
             startActivity(intent)
         }
 

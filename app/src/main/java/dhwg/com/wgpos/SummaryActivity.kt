@@ -41,7 +41,7 @@ class SummaryActivity : Activity() {
         if (hasFocus) {
             val amountText = findViewById(R.id.amount_text_view) as TextView
             val buyerId = intent.getIntExtra("buyerId", -1)
-            DHWGManagementAPI.getInhabitant(buyerId, { inhabitant ->
+            (application as WGPoSApplication).apiClient!!.getInhabitant(buyerId, { inhabitant ->
                 amountText.text = "${inhabitant.balance}€"
             })
         }

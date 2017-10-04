@@ -1,24 +1,23 @@
 package dhwg.com.wgpos.data
 
+import android.net.Credentials
 import android.util.Log
 import com.github.kittinunf.fuel.android.extension.responseJson
 import com.github.kittinunf.fuel.httpGet
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.result.Result
 
-object DHWGManagementAPI {
+class DHWGManagementAPI(val apiRoot: String,
+                        private val user: String,
+                        private val password: String) {
 
     data class Inhabitant(val id: Int, val username: String, val balance: Double)
     data class Product(val id: Int, val name: String, val unitPrice: Double)
 
-    val API_ROOT = "https://dhwg-management.herokuapp.com/api/"
-    val USER = "tablet"
-    val PASSWORD = "12blablub42"
-
     fun getInhabitants(onSuccess: (ArrayList<Inhabitant>) -> Unit) {
-        (API_ROOT + "inhabitants/")
+        (apiRoot + "inhabitants/")
                 .httpGet()
-                .authenticate(USER, PASSWORD)
+                .authenticate(user, password)
                 .responseJson { request, response, result ->
                     when (result) {
                         is Result.Failure -> {
@@ -40,9 +39,9 @@ object DHWGManagementAPI {
     }
 
     fun getInhabitant(id: Int, onSuccess: (Inhabitant) -> Unit) {
-        (API_ROOT + "inhabitants/$id/")
+        (apiRoot + "inhabitants/$id/")
                 .httpGet()
-                .authenticate(USER, PASSWORD)
+                .authenticate(user, password)
                 .responseJson { request, response, result ->
                     when (result) {
                         is Result.Failure -> {
@@ -60,9 +59,9 @@ object DHWGManagementAPI {
     }
 
     fun getProducts(onSuccess: (ArrayList<Product>) -> Unit) {
-        (API_ROOT + "pos/products/")
+        (apiRoot + "pos/products/")
                 .httpGet()
-                .authenticate(USER, PASSWORD)
+                .authenticate(user, password)
                 .responseJson { request, response, result ->
                     when (result) {
                         is Result.Failure -> {
@@ -84,9 +83,9 @@ object DHWGManagementAPI {
     }
 
     fun addPurchase(buyerId: Int, productId: Int) {
-        (API_ROOT + "pos/purchases/")
+        (apiRoot + "pos/purchases/")
                 .httpPost()
-                .authenticate(USER, PASSWORD)
+                .authenticate(user, password)
                 .header(Pair("Content-Type", "application/json"))
                 .body("{ \"buyer\" : $buyerId, \"product\" : $productId }")
                 .responseJson { request, response, result ->

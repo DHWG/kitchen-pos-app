@@ -14,6 +14,7 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val application = application as WGPoSApplication
 
         setContentView(R.layout.activity_main)
 
@@ -26,7 +27,8 @@ class MainActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val glay = findViewById(R.id.griddy) as GridLayout
-        DHWGManagementAPI.getInhabitants { inhabitants ->
+
+        application.apiClient!!.getInhabitants { inhabitants ->
             for (inhabitant in inhabitants) {
                 val button = createButton(inhabitant)
                 glay.addView(button)
