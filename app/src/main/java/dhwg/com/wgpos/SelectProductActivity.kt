@@ -29,6 +29,8 @@ class SelectProductActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val glay = findViewById(R.id.select_product_griddy) as GridLayout
+        glay.columnCount = 5
+        glay.rowCount = 2
         application.apiClient!!.getProducts { products ->
             for (product in products) {
                 val button = createButton(product, buyerId)

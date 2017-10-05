@@ -28,6 +28,8 @@ class MainActivity : Activity() {
 
         val glay = findViewById(R.id.griddy) as GridLayout
 
+        glay.columnCount = 5
+        glay.rowCount = 2
         application.apiClient!!.getInhabitants { inhabitants ->
             for (inhabitant in inhabitants) {
                 val button = createButton(inhabitant)
