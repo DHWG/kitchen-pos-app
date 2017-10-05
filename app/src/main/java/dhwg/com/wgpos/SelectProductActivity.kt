@@ -11,6 +11,15 @@ import dhwg.com.wgpos.data.DHWGManagementAPI
 
 class SelectProductActivity : Activity() {
 
+    inner class CancelButtonListener : View.OnClickListener {
+
+        override fun onClick(v: View?) {
+            val intent = Intent(this@SelectProductActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val application = application as WGPoSApplication
@@ -31,6 +40,14 @@ class SelectProductActivity : Activity() {
                 val button = createButton(product, buyerId)
                 glay.addView(button)
             }
+            // cancel button
+            val cancelButton = Button(this)
+            cancelButton.text = "Cancel"
+            cancelButton.width = 200
+            cancelButton.height = 200
+            cancelButton.setOnClickListener(CancelButtonListener())
+            cancelButton.setBackgroundResource(R.color.colorAccent)
+            glay.addView(cancelButton)
         }
     }
 
