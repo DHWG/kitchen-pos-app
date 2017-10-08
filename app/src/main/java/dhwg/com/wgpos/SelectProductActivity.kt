@@ -13,6 +13,8 @@ import dhwg.com.wgpos.data.DHWGManagementAPI
 
 class SelectProductActivity : Activity() {
 
+    val resetTimer = ResetToMainscreenTimer(15, this)
+
     inner class CancelButtonListener : View.OnClickListener {
 
         override fun onClick(v: View?) {
@@ -55,6 +57,15 @@ class SelectProductActivity : Activity() {
             layoutParams.columnSpec = GridLayout.spec(4)
             layoutParams.rowSpec = GridLayout.spec(1)
             glay.addView(cancelButton, layoutParams)
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            resetTimer.start()
+        } else {
+            resetTimer.cancel()
         }
     }
 

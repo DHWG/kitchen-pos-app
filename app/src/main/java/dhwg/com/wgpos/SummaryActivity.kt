@@ -11,6 +11,8 @@ import dhwg.com.wgpos.data.DHWGManagementAPI
 
 class SummaryActivity : Activity() {
 
+    val resetTimer = ResetToMainscreenTimer(15, this)
+
     inner class ButtonListener : View.OnClickListener {
 
         override fun onClick(v: View?) {
@@ -41,6 +43,9 @@ class SummaryActivity : Activity() {
             (application as WGPoSApplication).apiClient!!.getInhabitant(buyerId, { inhabitant ->
                 amountText.text = "${inhabitant.balance}€"
             })
+            resetTimer.start()
+        } else {
+            resetTimer.cancel()
         }
     }
 
