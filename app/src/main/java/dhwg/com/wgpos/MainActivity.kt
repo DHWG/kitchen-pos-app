@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.GridLayout
@@ -24,9 +25,7 @@ class MainActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val glay = findViewById(R.id.griddy) as GridLayout
-
-        glay.columnCount = 5
-        glay.rowCount = 2
+        
         application.apiClient!!.getInhabitants { inhabitants ->
             for (inhabitant in inhabitants) {
                 val button = createButton(inhabitant)

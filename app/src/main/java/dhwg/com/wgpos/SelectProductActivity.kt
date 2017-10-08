@@ -2,6 +2,8 @@ package dhwg.com.wgpos
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -48,8 +50,11 @@ class SelectProductActivity : Activity() {
             cancelButton.width = 200
             cancelButton.height = 200
             cancelButton.setOnClickListener(CancelButtonListener())
-            cancelButton.setBackgroundResource(R.color.colorAccent)
-            glay.addView(cancelButton)
+            cancelButton.background.setColorFilter(Color.rgb(255, 0, 50), PorterDuff.Mode.MULTIPLY)
+            val layoutParams = GridLayout.LayoutParams()
+            layoutParams.columnSpec = GridLayout.spec(4)
+            layoutParams.rowSpec = GridLayout.spec(1)
+            glay.addView(cancelButton, layoutParams)
         }
     }
 
