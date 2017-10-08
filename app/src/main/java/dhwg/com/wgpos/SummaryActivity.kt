@@ -25,7 +25,9 @@ class SummaryActivity : Activity() {
         setContentView(R.layout.activity_summary)
 
         // enter immersive fullscreen mode to hide all navigation bards
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val button = findViewById(R.id.back_button) as Button
         button.setOnClickListener(ButtonListener())

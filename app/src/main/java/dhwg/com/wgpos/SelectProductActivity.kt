@@ -30,7 +30,9 @@ class SelectProductActivity : Activity() {
         setContentView(R.layout.activity_select_product)
 
         // enter immersive fullscreen mode to hide all navigation bards
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
         val glay = findViewById(R.id.select_product_griddy) as GridLayout
         glay.columnCount = 5
