@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Initialize') {
       steps {
-        echo 'Hello World'
+        sh 'export ANDROID_HOME="/opt/android-sdk-3859397"'
       }
     }
     stage('Build') {
