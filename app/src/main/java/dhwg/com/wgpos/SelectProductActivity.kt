@@ -1,6 +1,7 @@
 package dhwg.com.wgpos
 
-import android.app.Activity
+import android.arch.lifecycle.LifecycleActivity
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
