@@ -1,7 +1,11 @@
 package dhwg.com.wgpos
 
 import android.app.Application
-import dhwg.com.wgpos.data.DHWGManagementAPI
+import android.util.Base64
+import dhwg.com.wgpos.data.*
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 /**
@@ -10,7 +14,9 @@ import java.util.*
  */
 class WGPoSApplication : Application() {
 
-    var apiClient: DHWGManagementAPI? = null
+    var wgMgmtService: WgManagementService? = null
+    var inhabitantsRepository: InhabitantRepository? = null
+    var productsRepository: ProductRepository? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -21,7 +27,31 @@ class WGPoSApplication : Application() {
         val apiRoot = props.getProperty("apiRoot")
         val user = props.getProperty("user")
         val password = props.getProperty("password")
-        apiClient = DHWGManagementAPI(apiRoot, user, password)
+
+        val authHeader = "Basic ${Base64.encodeToString("$user:$password".toByteArray(), Base64.NO_WRAP)}"
+
+        val httpClient = OkHttpClient.Builder()
+                .addInterceptor { chain ->
+                    val request = chain.request().newBuilder()
+                            .addHeader("Content-Type", "application/json")
+                            .addHeader("Accept", "application/json")
+                            .addHeader("Authorization", authHeader)
+                            .build()
+                    chain.proceed(request)
+                }
+                .build()
+
+        val retrofit = Retrofit.Builder()
+                .baseUrl(apiRoot + "/")
+                .client(httpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        wgMgmtService = retrofit.create(WgManagementService::class.java)
+
+        inhabitantsRepository = InhabitantRepository(wgMgmtService)
+        inhabitantsRepository!!.update()
+        productsRepository = ProductRepository(wgMgmtService)
+        productsRepository!!.update()
     }
 
 }

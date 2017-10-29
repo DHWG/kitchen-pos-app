@@ -3,11 +3,9 @@ package dhwg.com.wgpos
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import dhwg.com.wgpos.data.DHWGManagementAPI
 
 class SummaryActivity : Activity() {
 
@@ -40,9 +38,6 @@ class SummaryActivity : Activity() {
         if (hasFocus) {
             val amountText = findViewById(R.id.amount_text_view) as TextView
             val buyerId = intent.getIntExtra("buyerId", -1)
-            (application as WGPoSApplication).apiClient!!.getInhabitant(buyerId, { inhabitant ->
-                amountText.text = "${inhabitant.balance}€"
-            })
             resetTimer.start()
         } else {
             resetTimer.cancel()

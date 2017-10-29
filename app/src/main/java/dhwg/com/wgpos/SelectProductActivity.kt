@@ -9,9 +9,13 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.GridLayout
-import dhwg.com.wgpos.data.DHWGManagementAPI
+import dhwg.com.wgpos.data.Product
+import dhwg.com.wgpos.data.Purchase
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class SelectProductActivity : Activity() {
+class SelectProductActivity : LifecycleActivity() {
 
     val resetTimer = ResetToMainscreenTimer(15, this)
 
@@ -41,23 +45,28 @@ class SelectProductActivity : Activity() {
         val glay = findViewById(R.id.select_product_griddy) as GridLayout
         glay.columnCount = 5
         glay.rowCount = 2
-        application.apiClient!!.getProducts { products ->
-            for (product in products) {
-                val button = createButton(product, buyerId)
-                glay.addView(button)
+
+        val self = this
+        application.productsRepository!!.get().observe(this, object: Observer<List<Product>> {
+            override fun onChanged(products: List<Product>?) {
+                products!!.forEach { product ->
+                    val button = createButton(product, buyerId)
+                    glay.addView(button)
+                }
+
+                // cancel button
+                val cancelButton = Button(self)
+                cancelButton.text = "Cancel"
+                cancelButton.width = 200
+                cancelButton.height = 200
+                cancelButton.setOnClickListener(CancelButtonListener())
+                cancelButton.background.setColorFilter(Color.rgb(255, 0, 50), PorterDuff.Mode.MULTIPLY)
+                val layoutParams = GridLayout.LayoutParams()
+                layoutParams.columnSpec = GridLayout.spec(4)
+                layoutParams.rowSpec = GridLayout.spec(1)
+                glay.addView(cancelButton, layoutParams)
             }
-            // cancel button
-            val cancelButton = Button(this)
-            cancelButton.text = "Cancel"
-            cancelButton.width = 200
-            cancelButton.height = 200
-            cancelButton.setOnClickListener(CancelButtonListener())
-            cancelButton.background.setColorFilter(Color.rgb(255, 0, 50), PorterDuff.Mode.MULTIPLY)
-            val layoutParams = GridLayout.LayoutParams()
-            layoutParams.columnSpec = GridLayout.spec(4)
-            layoutParams.rowSpec = GridLayout.spec(1)
-            glay.addView(cancelButton, layoutParams)
-        }
+        })
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -69,19 +78,30 @@ class SelectProductActivity : Activity() {
         }
     }
 
-    inner class ButtonListener(val product: DHWGManagementAPI.Product, val buyerId: Int) : View.OnClickListener {
+    inner class ButtonListener(val product: Product, val buyerId: Int) : View.OnClickListener {
 
         override fun onClick(v: View?) {
             val intent = Intent(this@SelectProductActivity, SummaryActivity::class.java)
             intent.putExtra("buyerId", buyerId)
+            val application = application as WGPoSApplication
             Log.i("PURCHASE", "Buyer $buyerId, Product ${product.id}")
-            (application as WGPoSApplication).apiClient!!.addPurchase(buyerId, product.id)
-            startActivity(intent)
+            val purchase = Purchase(buyerId, product.id)
+            application.wgMgmtService!!.createPurchase(purchase).enqueue(object: Callback<Purchase> {
+                override fun onFailure(call: Call<Purchase>?, t: Throwable?) {
+                    Log.e("PURCHASE", "Not able to make purchase", t)
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onResponse(call: Call<Purchase>?, response: Response<Purchase>?) {
+                    startActivity(intent)
+                }
+
+            })
         }
 
     }
 
-    private fun createButton(product: DHWGManagementAPI.Product, buyerId: Int): Button {
+    private fun createButton(product: Product, buyerId: Int): Button {
         val b = Button(this)
         b.text = "${product.name} (${(product.unitPrice * 100).toInt()}ct)"
         b.width = 200

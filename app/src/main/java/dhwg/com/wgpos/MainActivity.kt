@@ -1,17 +1,14 @@
 package dhwg.com.wgpos
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.GridLayout
-import dhwg.com.wgpos.data.DHWGManagementAPI
+import dhwg.com.wgpos.data.*
 
 
-class MainActivity : Activity() {
+class MainActivity : LifecycleActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,17 +21,18 @@ class MainActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
 
-        val glay = findViewById(R.id.griddy) as GridLayout
-        
-        application.apiClient!!.getInhabitants { inhabitants ->
-            for (inhabitant in inhabitants) {
-                val button = createButton(inhabitant)
-                glay.addView(button)
+        application.inhabitantsRepository!!.get().observe(this, object: Observer<List<Inhabitant>> {
+            override fun onChanged(inhabitants: List<Inhabitant>?) {
+                val glay = findViewById(R.id.griddy) as GridLayout
+                inhabitants!!.forEach { inhabitant ->
+                    val button = createButton(inhabitant)
+                    glay.addView(button)
+                }
             }
-        }
+        })
     }
 
-    inner class ButtonListener(val inhabitant: DHWGManagementAPI.Inhabitant) : View.OnClickListener {
+    inner class ButtonListener(val inhabitant: Inhabitant) : View.OnClickListener {
 
         override fun onClick(v: View?) {
             val intent = Intent(this@MainActivity, SelectProductActivity::class.java)
@@ -44,7 +42,7 @@ class MainActivity : Activity() {
 
     }
 
-    private fun createButton(inhabitant: DHWGManagementAPI.Inhabitant): Button {
+    private fun createButton(inhabitant: Inhabitant): Button {
         val b = Button(this)
         b.text = inhabitant.username
         b.width = 200
