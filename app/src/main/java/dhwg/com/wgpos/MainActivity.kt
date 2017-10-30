@@ -26,7 +26,7 @@ class MainActivity : LifecycleActivity() {
         application.inhabitantsRepository!!.get().observe(this, object: Observer<List<Inhabitant>> {
             override fun onChanged(inhabitants: List<Inhabitant>?) {
                 val glay = findViewById(R.id.griddy) as GridLayout
-                inhabitants!!.forEach { inhabitant ->
+                inhabitants.orEmpty().forEach { inhabitant ->
                     val button = createButton(inhabitant)
                     glay.addView(button)
                 }

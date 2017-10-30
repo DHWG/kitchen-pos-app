@@ -50,7 +50,7 @@ class SelectProductActivity : LifecycleActivity() {
         val self = this
         application.productsRepository!!.get().observe(this, object: Observer<List<Product>> {
             override fun onChanged(products: List<Product>?) {
-                products!!.forEach { product ->
+                products.orEmpty().forEach { product ->
                     val button = createButton(product, buyerId)
                     glay.addView(button)
                 }
