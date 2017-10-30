@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import dhwg.com.wgpos.data.Inhabitant
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class SummaryActivity : Activity() {
 
@@ -37,7 +41,17 @@ class SummaryActivity : Activity() {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
             val amountText = findViewById(R.id.amount_text_view) as TextView
+            val application = application as WGPoSApplication
             val buyerId = intent.getIntExtra("buyerId", -1)
+            application.wgMgmtService!!.getInhabitant(buyerId).enqueue(object: Callback<Inhabitant> {
+                override fun onFailure(call: Call<Inhabitant>?, t: Throwable?) {
+                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                }
+
+                override fun onResponse(call: Call<Inhabitant>?, response: Response<Inhabitant>?) {
+                    amountText.setText("" + response!!.body()!!.balance)
+                }
+            })
             resetTimer.start()
         } else {
             resetTimer.cancel()
