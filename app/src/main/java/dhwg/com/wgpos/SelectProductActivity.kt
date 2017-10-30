@@ -90,14 +90,16 @@ class SelectProductActivity : LifecycleActivity() {
             application.wgMgmtService!!.createPurchase(purchase).enqueue(object: Callback<Purchase> {
                 override fun onFailure(call: Call<Purchase>?, t: Throwable?) {
                     Log.e("PURCHASE", "Not able to make purchase", t)
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                    TODO("not implemented")
                 }
 
                 override fun onResponse(call: Call<Purchase>?, response: Response<Purchase>?) {
-                    startActivity(intent)
+                    // pass
                 }
 
             })
+
+            startActivity(intent)
         }
 
     }
